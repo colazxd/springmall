@@ -1,1 +1,1 @@
-java项目 商城
+Spring商城项目
