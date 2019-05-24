@@ -16,7 +16,7 @@ public class OrderItem {
 
     private String productImage;
 
-    private BigDecimal currentUnitPrice;
+    private BigDecimal currentUnitPrice;    //当前单价，精确到分
 
     private Integer quantity;
 

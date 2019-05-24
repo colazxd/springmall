@@ -14,8 +14,16 @@ import java.util.Date;
 public class DateTimeUtil {
     //使用joda time
 
+    public static final String STANDARD_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     public static Date strToDate(String strDate, String format) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(format);
+        DateTime dateTime = dateTimeFormatter.parseDateTime(strDate);
+        return dateTime.toDate();
+    }
+
+    public static Date strToDate(String strDate) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(STANDARD_FORMAT);
         DateTime dateTime = dateTimeFormatter.parseDateTime(strDate);
         return dateTime.toDate();
     }
@@ -26,4 +34,14 @@ public class DateTimeUtil {
         DateTime dateTime = new DateTime(date);
         return dateTime.toString(format);
     }
+
+    public static String dateToStr(Date date) {
+        if (date == null)
+            return StringUtils.EMPTY;
+        DateTime dateTime = new DateTime(date);
+        return dateTime.toString(STANDARD_FORMAT);
+    }
+
+
+
 }

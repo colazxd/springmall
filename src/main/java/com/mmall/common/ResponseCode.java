@@ -4,7 +4,7 @@ package com.mmall.common;
  * @author colaz
  * @date 2019/4/30
  **/
-public enum  ResponseCode {
+public enum ResponseCode {
 
     SUCCESS(0, "SUCCESS"),
     ERROR(1, "ERROR"),

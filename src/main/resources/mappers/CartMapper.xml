@@ -101,8 +101,8 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
+        update_time = now(),
+    </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -113,7 +113,54 @@
       quantity = #{quantity,jdbcType=INTEGER},
       checked = #{checked,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectByUserIdAndProductId" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+    and product_id = #{productId}
+  </select>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="Integer">
+    select
+    <include refid="Base_Column_List"/>
+    from mmall_cart
+    where user_id = #{userId}
+  </select>
+  <select id="getUnCheckedNum" resultType="int" parameterType="int">
+    select count (1)
+    from mmall_cart
+    where user_id = #{userId}
+    and checked = 0
+  </select>
+  <delete id="deleteByUserIdProductIds" parameterType="map">
+    delete from mmall_cart
+    where user_id = #{userId}
+    <if test="productIdList != null">
+      and prouct_id in
+      <foreach collection="productIdList" item="item" index="index" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </delete>
+  <update id="checkedOrUnchecked" parameterType="map">
+    update from mmall_cart
+    set checked = #{checked},
+    update_time = now()
+    where user_id = #{userId}
+    <if test="productId != null">
+      and product_id = #{productId}
+    </if>
+  </update>
+  <select id="selectCartProductCount" parameterType="int" resultType="int">
+    select
+    IFNULL(sum (quantity), 0)
+    from mmall_cart
+    where user_id = #{userId}
+  </select>
+
+
+
 </mapper>

@@ -5,6 +5,7 @@ import com.mmall.service.IFileService;
 import com.mmall.util.FTPUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -16,10 +17,17 @@ import java.util.UUID;
  * @date 2019/5/3
  **/
 
+@Service("iFileService")
 public class FileServiceImpl implements IFileService {
 
     private Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
+    /**
+     * 使用spring mvc的文件上传功能，上传文件到FTP服务器
+     * @param file
+     * @param path
+     * @return 上传文件名
+     */
     public String upload(MultipartFile file, String path) {
         String fileName = file.getOriginalFilename();
         String extensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
