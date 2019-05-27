@@ -92,7 +92,6 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.createBySuccess(cartMapper.selectCartProductCount(userId));
     }
 
-
     //包装返回
     @Override
     public ServerResponse<CartVo> list(Integer userId) {

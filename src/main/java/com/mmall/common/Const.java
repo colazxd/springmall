@@ -19,6 +19,10 @@ public class Const {
         int ROLE_ADMIN = 1;
     }
 
+    public interface RedisCacheExTime {
+        int REDIS_SESSION_EXTIME = 60 * 30; //30分钟
+    }
+
     public interface Cart {
         int CHECKED = 1;
         int UNCHECKED = 0;
