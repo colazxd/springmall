@@ -36,6 +36,12 @@ public class PropertiesUtil {
         return value;
     }
 
+    /**
+     * 查找key对应的value，若key不存在，则使用给定默认值
+     * @param key
+     * @param defaultValue
+     * @return
+     */
     public static String getProperty(String key, String defaultValue) {
         String value = prop.getProperty(key.trim());
         if (StringUtils.isBlank(value)) {
@@ -43,4 +49,29 @@ public class PropertiesUtil {
         }
         return value;
     }
+
+    public static int getIntProperty(String key) {
+        return getIntProperty(key, 0);
+    }
+
+    public static int getIntProperty(String key, int defaultValue) {
+        String value = prop.getProperty(key.trim());
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+        return Integer.parseInt(value);
+    }
+
+    public static boolean getBoolProperty(String key) {
+        return getBoolProperty(key, false);
+    }
+
+    public static boolean getBoolProperty(String key, boolean defaultValue) {
+        String value = prop.getProperty(key.trim());
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(value);
+    }
+
 }

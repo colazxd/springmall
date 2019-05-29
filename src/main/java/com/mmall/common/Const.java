@@ -19,6 +19,10 @@ public class Const {
         int ROLE_ADMIN = 1;
     }
 
+    public interface RedisCacheExTime {
+        int REDIS_SESSION_EXTIME = 60 * 30; //30分钟
+    }
+
     public interface Cart {
         int CHECKED = 1;
         int UNCHECKED = 0;
@@ -74,6 +78,15 @@ public class Const {
         public String getValue() {
             return value;
         }
+
+        public static OrderStatusEnum codeOf(int code) {
+            for (OrderStatusEnum orderStatusEnum : values()) {
+                if (orderStatusEnum.getCode() == code) {
+                    return orderStatusEnum;
+                }
+            }
+            throw new RuntimeException("没有找到对应枚举");
+        }
     }
 
     public interface AlipayCallback {
@@ -100,6 +113,34 @@ public class Const {
 
         public String getValue() {
             return value;
+        }
+    }
+
+    public enum PaymentTypeEnum {
+        ONLINE_PAY(1, "在线支付");
+
+        private int code;
+        private String value;
+        PaymentTypeEnum(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static PaymentTypeEnum codeOf(int code) {
+            for (PaymentTypeEnum paymentTypeEnum : values()) {
+                if (paymentTypeEnum.getCode() == code) {
+                    return paymentTypeEnum;
+                }
+            }
+            throw new RuntimeException("没有找到对应枚举");
         }
     }
 

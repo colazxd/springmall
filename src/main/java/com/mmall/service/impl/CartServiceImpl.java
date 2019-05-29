@@ -92,7 +92,6 @@ public class CartServiceImpl implements ICartService {
         return ServerResponse.createBySuccess(cartMapper.selectCartProductCount(userId));
     }
 
-
     //包装返回
     @Override
     public ServerResponse<CartVo> list(Integer userId) {
@@ -123,7 +122,7 @@ public class CartServiceImpl implements ICartService {
                     cartProductVo.setProductPrice(product.getPrice());
                     cartProductVo.setProductStock(product.getStock());
                     int limitCount = 0;
-                    if (product.getStock() >=  cartItem.getQuantity()) {
+                    if (product.getStock() >=  cartItem.getQuantity()) {    //当前商品库存大于购物车中该商品数量
                         limitCount = cartItem.getQuantity();
                         cartProductVo.setLimitQuantity(Const.Cart.LIMIT_COUNT_SUCCESS);
                     } else {
