@@ -47,14 +47,20 @@ public class MD5Util {
         return resultString.toUpperCase();
     }
 
-    public static String MD5EncodeUtf8(String origin) {
-        return MD5Encode(origin, "utf-8");
-    }
-//
+
 //    public static String MD5EncodeUtf8(String origin) {
-//        origin = origin + PropertiesUtil.getProperty("password.salt", "");
 //        return MD5Encode(origin, "utf-8");
 //    }
+
+    /**
+     * 加盐值的MD5加密
+     * @param origin
+     * @return
+     */
+    public static String MD5EncodeUtf8(String origin) {
+        origin = origin + PropertiesUtil.getProperty("password.salt", "");
+        return MD5Encode(origin, "utf-8");
+    }
 
 
     private static final String hexDigits[] = {"0", "1", "2", "3", "4", "5",

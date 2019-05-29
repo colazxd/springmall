@@ -72,6 +72,19 @@ public class RedisPoolUtil {
         return result;
     }
 
+    public static Long del(String key) {
+        Jedis jedis = null;
+        Long result = null;
+        try {
+            jedis = RedisPool.getJedis();
+            result = jedis.del(key);
+        } catch (Exception e) {
+            log.error("del key:{} error", key, e);
+            return result;
+        }
+        return result;
+    }
+
     private static void closeJedis(Jedis jedis) {
         if (jedis != null)
             jedis.close();

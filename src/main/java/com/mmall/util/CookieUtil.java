@@ -24,12 +24,17 @@ public class CookieUtil {
         Cookie ck = new Cookie(COOKIE_NAME, token);
         ck.setDomain(COOKIE_DOMAIN);
         ck.setPath("/");        //代表设置在根目录
-
+        ck.setHttpOnly(true);     //防止脚本攻击
         ck.setMaxAge(60 * 60 * 24 * 365);   //maxAge不设置，cookie不会写入硬盘。只在当前页面有效
         log.info("write cookieName:{}, cookieValue:{}", ck.getName(), ck.getValue());
         response.addCookie(ck);
     }
 
+    /**
+     * 读取用户登录cookie信息
+     * @param request
+     * @return
+     */
     public static String readLoginCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
