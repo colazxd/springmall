@@ -51,7 +51,8 @@ public class CategoryManageController {
     @RequestMapping(value = "get_category.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<List<Category>> getCategory(Integer categoryId) {
-        return iCategoryService.selectParallelChildren(categoryId);
+        ServerResponse response = iCategoryService.selectParallelChildren(categoryId);
+        return response;
     }
 
 

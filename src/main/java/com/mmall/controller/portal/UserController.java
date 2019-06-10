@@ -32,7 +32,7 @@ public class UserController {
     @Autowired
     private IUserService iUserService;
 
-    @RequestMapping(value = "login.do", method = RequestMethod.POST)
+    @RequestMapping(value = "login.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<User> login(String username, String password, HttpSession session) {
         ServerResponse<User> response = iUserService.login(username, password);
@@ -67,12 +67,14 @@ public class UserController {
 
     @RequestMapping(value = "get_use_info.do")
     @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpServletRequest request) {
-//        User user = (User)session.getAttribute(Const.CURRENT_USER);
-        String loginToken = CookieUtil.readLoginCookie(request);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
+    public ServerResponse<User> getUserInfo(HttpServletRequest request, HttpSession session) {
+
+        String loginToken = session.getId();
+        //        User user = (User)session.getAttribute(Const.CURRENT_USER);
+//        String loginToken = CookieUtil.readLoginCookie(request);
+//        if (StringUtils.isEmpty(loginToken)) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
         User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
