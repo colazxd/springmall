@@ -2,7 +2,6 @@ package com.mmall.controller.backend;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
-import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Product;
@@ -13,10 +12,9 @@ import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
 import com.mmall.util.PropertiesUtil;
-import com.mmall.util.RedisPoolUtil;
+import com.mmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -52,7 +49,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
+        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
         ServerResponse response = iUserService.checkAdminRole(user);
         if (response.isSuccess()) {
             return iProductService.saveOrUpdate(product);
@@ -67,7 +64,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
+        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -87,7 +84,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
+        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -107,7 +104,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
+        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -127,7 +124,7 @@ public class ProductManageController {
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
+        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }

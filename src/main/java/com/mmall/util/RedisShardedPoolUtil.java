@@ -12,13 +12,13 @@ import redis.clients.jedis.ShardedJedis;
  * @date 2019/5/25
  **/
 @Slf4j
-public class RedisPoolUtil {
+public class RedisShardedPoolUtil {
 
     public static Long expire(String key, int exTime) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         Long result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.expire(key, exTime);
         } catch (Exception e) {
             log.error("expire key:{} exTime:{} error", key, exTime, e);
@@ -31,10 +31,10 @@ public class RedisPoolUtil {
 
     //exTime单位：秒
     public static String setEx(String key, String value, int exTime) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.setex(key, exTime, value);
         } catch (Exception e) {
             log.error("setex key:{} value:{} error", key, value, e);
@@ -46,10 +46,10 @@ public class RedisPoolUtil {
     }
 
     public static String set(String key, String value) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.set(key, value);
         } catch (Exception e) {
             log.error("set key:{} value:{} error", key, value, e);
@@ -61,10 +61,10 @@ public class RedisPoolUtil {
     }
 
     public static String get(String key) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         String result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.get(key);
         } catch (Exception e) {
             log.error("get key:{} error", key, e);
@@ -76,10 +76,10 @@ public class RedisPoolUtil {
     }
 
     public static Long del(String key) {
-        Jedis jedis = null;
+        ShardedJedis jedis = null;
         Long result = null;
         try {
-            jedis = RedisPool.getJedis();
+            jedis = RedisShardedPool.getJedis();
             result = jedis.del(key);
         } catch (Exception e) {
             log.error("del key:{} error", key, e);
@@ -88,9 +88,8 @@ public class RedisPoolUtil {
         return result;
     }
 
-    private static void closeJedis(Jedis jedis) {
+    private static void closeJedis(ShardedJedis jedis) {
         if (jedis != null)
             jedis.close();
     }
-
 }
