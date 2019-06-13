@@ -36,74 +36,78 @@ public class OrderManageController {
     public ServerResponse<PageInfo> orderList(HttpServletRequest request, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                               @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        String loginToken = CookieUtil.readLoginCookie(request);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        if (iUserService.checkAdminRole(user).isSuccess()) {
-            return iOrderService.manageList(pageNum, pageSize);
-        } else {
-            return ServerResponse.createByErrorMsg("无权限操作");
-        }
+//        String loginToken = CookieUtil.readLoginCookie(request);
+//        if (StringUtils.isEmpty(loginToken)) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
+//        if (user == null) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        if (iUserService.checkAdminRole(user).isSuccess()) {
+//            return iOrderService.manageList(pageNum, pageSize);
+//        } else {
+//            return ServerResponse.createByErrorMsg("无权限操作");
+//        }
+        return iOrderService.manageList(pageNum, pageSize);
     }
 
     @RequestMapping("detail.do")
     public ServerResponse<OrderVo> orderDetail(HttpServletRequest request, Long orderNo) {
 
-        String loginToken = CookieUtil.readLoginCookie(request);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        if (iUserService.checkAdminRole(user).isSuccess()) {
-            return iOrderService.manageDetail(orderNo);
-        } else {
-            return ServerResponse.createByErrorMsg("无权限操作");
-        }
+//        String loginToken = CookieUtil.readLoginCookie(request);
+//        if (StringUtils.isEmpty(loginToken)) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
+//        if (user == null) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        if (iUserService.checkAdminRole(user).isSuccess()) {
+//            return iOrderService.manageDetail(orderNo);
+//        } else {
+//            return ServerResponse.createByErrorMsg("无权限操作");
+//        }
+        return iOrderService.manageDetail(orderNo);
     }
 
     @RequestMapping("search.do")
     public ServerResponse<PageInfo> orderSearch(HttpServletRequest request, Long orderNo, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                                 @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        String loginToken = CookieUtil.readLoginCookie(request);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        if (iUserService.checkAdminRole(user).isSuccess()) {
-            return iOrderService.manageSearch(orderNo, pageNum, pageSize);
-        } else {
-            return ServerResponse.createByErrorMsg("无权限操作");
-        }
+//        String loginToken = CookieUtil.readLoginCookie(request);
+//        if (StringUtils.isEmpty(loginToken)) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
+//        if (user == null) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        if (iUserService.checkAdminRole(user).isSuccess()) {
+//            return iOrderService.manageSearch(orderNo, pageNum, pageSize);
+//        } else {
+//            return ServerResponse.createByErrorMsg("无权限操作");
+//        }
+        return iOrderService.manageSearch(orderNo, pageNum, pageSize);
     }
 
     @RequestMapping("send_goods.do")
     public ServerResponse<String> orderSendGoods(HttpServletRequest request, Long orderNo) {
 
-        String loginToken = CookieUtil.readLoginCookie(request);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        if (iUserService.checkAdminRole(user).isSuccess()) {
-            return iOrderService.sendGoods(orderNo);
-        } else {
-            return ServerResponse.createByErrorMsg("无权限操作");
-        }
+//        String loginToken = CookieUtil.readLoginCookie(request);
+//        if (StringUtils.isEmpty(loginToken)) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
+//        if (user == null) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        if (iUserService.checkAdminRole(user).isSuccess()) {
+//            return iOrderService.sendGoods(orderNo);
+//        } else {
+//            return ServerResponse.createByErrorMsg("无权限操作");
+//        }
+        return iOrderService.sendGoods(orderNo);
     }
 
 

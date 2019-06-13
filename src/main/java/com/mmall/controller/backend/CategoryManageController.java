@@ -39,19 +39,22 @@ public class CategoryManageController {
     @ResponseBody
     public ServerResponse addCategory(HttpServletRequest request, String categoryName,
                                       @RequestParam(value = "parentId", defaultValue = "0") int parentId) {
-        String loginToken = CookieUtil.readLoginCookie(request);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        if (iUserService.checkAdminRole(user).isSuccess()) {
-            return iCategoryService.addCategory(categoryName, parentId);
-        } else {
-            return ServerResponse.createByErrorMsg("无权限操作");
-        }
+//        String loginToken = CookieUtil.readLoginCookie(request);
+//        if (StringUtils.isEmpty(loginToken)) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        User user = JsonUtil.string2Obj(RedisShardedPoolUtil.get(loginToken), User.class);
+//        if (user == null) {
+//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+//        }
+//        if (iUserService.checkAdminRole(user).isSuccess()) {
+//
+//        } else {
+//            return ServerResponse.createByErrorMsg("无权限操作");
+//        }
+
+        //由拦截器验证是否登录以及权限
+        return iCategoryService.addCategory(categoryName, parentId);
     }
 
     @RequestMapping(value = "get_category.do", method = RequestMethod.GET)
