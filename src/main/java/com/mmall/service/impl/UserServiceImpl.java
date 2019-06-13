@@ -89,6 +89,27 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public ServerResponse<User> updateUserInformation(User user) {
+        //userName不能更新
+        //email需要检验，不能和其他用户重复（查找数据库是否存在新的eamil，不存在直接更新，存在且不是该用户的失败）
+        int resCount = userMapper.checkEmailByUserId(user.getId(), user.getEmail());
+        if (resCount > 0) {
+            return ServerResponse.createByErrorMsg("email重复，修改email后尝试更新");
+        }
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setPhone(user.getPhone());
+        updateUser.setQuestion(user.getQuestion());
+        updateUser.setAnswer(user.getAnswer());
+        int updateCount = userMapper.updateByPrimaryKeySelective(updateUser);
+        if (updateCount > 0)
+            return ServerResponse.createBySuccess("更新用户信息成功", updateUser);
+
+        return ServerResponse.createByErrorMsg("更新用户信息失败");
+    }
+
+    @Override
     public ServerResponse<String> getForgetQuestion(String username) {
         String question = userMapper.selectQuestionByUsername(username);
         if (question == null) {

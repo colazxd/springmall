@@ -1,6 +1,5 @@
 package com.mmall.controller.portal;
 
-import com.github.pagehelper.StringUtil;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
@@ -9,6 +8,7 @@ import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
 import com.mmall.util.RedisPoolUtil;
+import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.print.attribute.standard.RequestingUserName;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,10 +33,13 @@ public class UserController {
 
     @RequestMapping(value = "login.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<User> login(String username, String password, HttpSession session) {
+    public ServerResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest) {
         ServerResponse<User> response = iUserService.login(username, password);
         if (response.isSuccess()) {
 //            session.setAttribute(Const.CURRENT_USER, response.getData());
+
+            //登录成功将sessionId写入cookie，将user序列化信息保存在redis中
+            CookieUtil.writeLoginCookie(httpServletResponse, session.getId());
             RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()), Const.RedisCacheExTime.REDIS_SESSION_EXTIME);
         }
         return response;
@@ -69,12 +71,11 @@ public class UserController {
     @ResponseBody
     public ServerResponse<User> getUserInfo(HttpServletRequest request, HttpSession session) {
 
-        String loginToken = session.getId();
         //        User user = (User)session.getAttribute(Const.CURRENT_USER);
-//        String loginToken = CookieUtil.readLoginCookie(request);
-//        if (StringUtils.isEmpty(loginToken)) {
-//            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-//        }
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
         User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
@@ -99,6 +100,28 @@ public class UserController {
     public ServerResponse resetPassword(String username, String passwordNew, String forgetToken) {
         return iUserService.resetPassword(username, passwordNew, forgetToken);
 
+    }
+
+    @RequestMapping(value = "update_user_information")
+    @ResponseBody
+    public ServerResponse<User> updateUserInfo(HttpServletRequest request, User user) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User curUser = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
+        if (curUser == null) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        user.setId(curUser.getId());
+        user.setUsername(curUser.getUsername());
+        ServerResponse<User> response = iUserService.updateUserInformation(user);
+        if (!response.isSuccess()) {
+            //返回的结果没有用户名
+            response.getData().setUsername(curUser.getUsername());
+            RedisPoolUtil.setEx(loginToken, JsonUtil.obj2String(response.getData()), Const.RedisCacheExTime.REDIS_SESSION_EXTIME);
+        }
+        return response;
     }
 
 }

@@ -10,7 +10,11 @@ import com.mmall.pojo.User;
 import com.mmall.service.IFileService;
 import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JsonUtil;
 import com.mmall.util.PropertiesUtil;
+import com.mmall.util.RedisPoolUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -43,11 +47,12 @@ public class ProductManageController {
 
     @RequestMapping(value = "save.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse save(HttpSession session, Product product) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
+    public ServerResponse save(HttpServletRequest request, Product product) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         ServerResponse response = iUserService.checkAdminRole(user);
         if (response.isSuccess()) {
             return iProductService.saveOrUpdate(product);
@@ -57,8 +62,12 @@ public class ProductManageController {
 
     @RequestMapping(value = "set_sale_status.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse setSaleStatus(HttpSession session, Integer productId, Integer status) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse setSaleStatus(HttpServletRequest request, Integer productId, Integer status) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -71,10 +80,14 @@ public class ProductManageController {
 
     @RequestMapping(value = "list.do")
     @ResponseBody
-    public ServerResponse<PageInfo> list(HttpSession session,
+    public ServerResponse<PageInfo> list(HttpServletRequest request,
                                          @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                          @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -87,10 +100,14 @@ public class ProductManageController {
 
     @RequestMapping(value = "search.do")
     @ResponseBody
-    public ServerResponse<PageInfo> list(HttpSession session,String productName,Integer productId,
+    public ServerResponse<PageInfo> list(HttpServletRequest request,String productName,Integer productId,
                                          @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                          @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -103,10 +120,14 @@ public class ProductManageController {
 
     @RequestMapping("upload.do")
     @ResponseBody
-    public ServerResponse upload(HttpSession session,
+    public ServerResponse upload(HttpServletRequest re,
                                       @RequestParam(value = "upload_file", required = false) MultipartFile file,
                                       HttpServletRequest request) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }

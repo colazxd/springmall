@@ -10,7 +10,11 @@ import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Cart;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JsonUtil;
+import com.mmall.util.RedisPoolUtil;
 import net.sf.jsqlparser.schema.Server;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +43,12 @@ public class OrderController {
 
     @RequestMapping("create.do")
     @ResponseBody
-    public ServerResponse create(HttpSession session, Integer shippingId) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse create(HttpServletRequest request, Integer shippingId) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -49,8 +57,12 @@ public class OrderController {
 
     @RequestMapping("cancel.do")
     @ResponseBody
-    public ServerResponse cancel(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse cancel(HttpServletRequest request, Long orderNo) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);;
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -59,8 +71,12 @@ public class OrderController {
 
     @RequestMapping("get_order_cart_product.do")
     @ResponseBody
-    public ServerResponse getOrderCartProduct(HttpSession session) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse getOrderCartProduct(HttpServletRequest request) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -69,8 +85,12 @@ public class OrderController {
 
     @RequestMapping("detail.do")
     @ResponseBody
-    public ServerResponse detail(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse detail(HttpServletRequest request, Long orderNo) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -79,9 +99,13 @@ public class OrderController {
 
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse list(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+    public ServerResponse list(HttpServletRequest request, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                                     @RequestParam(value = "pageSize", defaultValue = "20") int pageSize) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -90,12 +114,17 @@ public class OrderController {
 
     @RequestMapping("pay.do")
     @ResponseBody
-    public ServerResponse pay(HttpSession session, Long orderNo, HttpServletRequest request) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse pay(Long orderNo, HttpServletRequest request) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
+
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        //◊¢“‚ªÒµ√µƒ¬∑æ∂◊Ó∫Û√ª”–'/'
+        //Ê≤°Êúâ"/"ÈúÄË¶ÅÊ≥®ÊÑè
         String path = request.getSession().getServletContext().getRealPath("upload");
         return iOrderService.pay(orderNo, user.getId(), path);
     }
@@ -114,19 +143,20 @@ public class OrderController {
             }
             paramsMap.put(name, strParams);
         }
-        logger.info("÷ß∏∂±¶ªÿµ˜£∫sign:{}, trade_status:{}, ≤Œ ˝£∫{}", paramsMap.get("sign"), paramsMap.get("trade_no"), paramsMap.toString());
-        //—È«©£¨Õ¨ ±–Ë“™±‹√‚÷ÿ∏¥Õ®÷™
-        //≤ÈŒƒµµ°£°£°£
+        logger.info("÷ßÊîØ‰ªòÂÆùÂõûË∞ÉÔºösign:{}, trade_no:{}, trade_status:{}, ËØ∑Ê±ÇÂèÇÊï∞{}",
+                paramsMap.get("sign"), paramsMap.get("trade_no"), paramsMap.get("trade_status"), paramsMap.toString());
+
+        //È™åÁ≠æ
         try {
             boolean checkResult = AlipaySignature.rsaCheckV2(paramsMap, Configs.getAlipayPublicKey(), "utf-8", Configs.getSignType());
             if (!checkResult) {
-                return ServerResponse.createByErrorMsg("∑«∑®«Î«Û£¨‘Ÿ«Î«ÛæÕ±®æØ¡À£°£°£°£°");
+                return ServerResponse.createByErrorMsg("ÈùûÊîØ‰ªòÂÆùËØ∑Ê±ÇÔºåÂõûË∞ÉÂøΩÁï•");
             }
         } catch (AlipayApiException e) {
-            logger.error("ªÿµ˜ºÏ≤È≤Œ ˝“Ï≥£", e);
+            logger.error("Á≠æÂêçÈ™åËØÅÂºÇÂ∏∏", e);
         }
 
-        //—È÷§ªÿµ˜≤Œ ˝appid°¢Õ‚≤ø∂©µ•∫≈∫Õ∂©µ•Ω∂Ó
+        //ËøòÈúÄË¶ÅÈ™åËØÅappid
         ServerResponse response = iOrderService.alipayCallback(paramsMap);
         if (response.isSuccess()) {
             return Const.AlipayCallback.RESPONSE_SUCCESS;
@@ -138,8 +168,12 @@ public class OrderController {
 
     @RequestMapping("query_order_pay_status.do")
     @ResponseBody
-    public ServerResponse<Boolean> queryOrderPayStatus(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<Boolean> queryOrderPayStatus(HttpServletRequest request, Long orderNo) {
+        String loginToken = CookieUtil.readLoginCookie(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        User user = JsonUtil.string2Obj(RedisPoolUtil.get(loginToken), User.class);
         if (user == null) {
             return ServerResponse.createByErrorCodeMsg(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }

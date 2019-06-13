@@ -16,6 +16,8 @@ public interface IUserService {
 
     ServerResponse<User> getInfomation(Integer userId);
 
+    ServerResponse<User> updateUserInformation(User user);
+
     ServerResponse<String> getForgetQuestion(String username);
 
     ServerResponse<String> checkAnswer(String username, String question, String answer);

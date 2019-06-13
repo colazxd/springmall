@@ -14,8 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class CookieUtil {
 
-    // Cookie域设置为一级域名，子域名aaa.happymmall.com也可以获得，同级域名不能获得
-    private static final String COOKIE_DOMAIN = ".happymmal.com";
+    //X:domain=".happymmall.com"
+    //a:A.happymmall.com            cookie:domain=A.happymmall.com;path="/"
+    //b:B.happymmall.com            cookie:domain=B.happymmall.com;path="/"
+    //c:A.happymmall.com/test/cc    cookie:domain=A.happymmall.com;path="/ee/cc/"
+    //d:A.happymmall.com/test/dd    cookie:domain=A.happymmall.com;path="/ee/dd/"
+    //e:A.happymmall.com/test       cookie:domain=A.happymmall.com;path="/ee"
+
+    // Cookie域设置为一级域名，子域名aaa.happymmall.com也可以获得，同级域名不能获得   COOKIE_DOMAIN之前写错，导致无法获得cookie
+    private static final String COOKIE_DOMAIN = ".happymmall.com";
+//    private static final String COOKIE_DOMAIN = ".com";
     private static final String COOKIE_NAME = "mmall_login_token";
 
 
