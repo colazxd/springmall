@@ -21,7 +21,7 @@ public class CookieUtil {
     //d:A.happymmall.com/test/dd    cookie:domain=A.happymmall.com;path="/ee/dd/"
     //e:A.happymmall.com/test       cookie:domain=A.happymmall.com;path="/ee"
 
-    // Cookie域设置为一级域名，子域名aaa.happymmall.com也可以获得，同级域名不能获得   COOKIE_DOMAIN之前写错，导致无法获得cookie
+    // Cookie域设置为一级域名，子域名aaa.happymmall.com也可以获得，同级域名不能获得   COOKIE_DOMAIN不要写错，导致无法获得cookie
     private static final String COOKIE_DOMAIN = ".happymmall.com";
 //    private static final String COOKIE_DOMAIN = ".com";
     private static final String COOKIE_NAME = "mmall_login_token";

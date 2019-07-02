@@ -22,7 +22,7 @@ public class ExceptionResolver implements HandlerExceptionResolver {
         ModelAndView modelAndView = new ModelAndView(new MappingJacksonJsonView());
 
         //使用jakson2.x时候使用MappingJackson2JsonView
-        modelAndView.addObject("status", ResponseCode.ERROR.getCode());
+        modelAndView.addObject("status", com.mmall.common.ResponseCode.ERROR.getCode());
         modelAndView.addObject("msg", "接口异常");
         return null;
     }

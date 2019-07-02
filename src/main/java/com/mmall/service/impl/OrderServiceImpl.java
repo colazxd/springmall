@@ -29,6 +29,7 @@ import com.mmall.vo.ShippingVo;
 import net.sf.jsqlparser.schema.Server;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.aspectj.weaver.ast.Or;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -563,6 +564,30 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         return ServerResponse.createByErrorMsg("订单不存在");
+    }
+
+    @Override
+    public void closeOrder(int hour) {
+        //查找当前时间前hour小时的order，返回库存 并关闭order
+        Date closeDateTime = DateUtils.addHours(new Date(), -hour);
+        List<Order> orderList = orderMapper.selectOrderStatusByCreateTime(Const.OrderStatusEnum.NO_PAY.getCode(), DateTimeUtil.dateToStr(closeDateTime));
+        for (Order order : orderList) {
+            List<OrderItem> orderItemList = orderItemMapper.selectByOrderNo(order.getOrderNo());
+            for (OrderItem orderItem : orderItemList) {
+                //使用主键作为where条件，防止锁表。同时必须是支持InnoDB引擎
+                Integer productStock = productMapper.selectStockByProductId(orderItem.getProductId());
+                //商品已经被delect，不需要再更新库存
+                if (productStock == null) {
+                    continue;
+                }
+                Product product = new Product();
+                product.setId(orderItem.getProductId());
+                product.setStock(productStock + orderItem.getQuantity());
+                productMapper.updateByPrimaryKeySelective(product);
+            }
+            orderMapper.setOrderStatusByOrderId(order.getId(), Const.OrderStatusEnum.CANCELED.getCode());
+            logger.info("关闭订单：{}",order.getOrderNo());
+        }
     }
 
     // 简单打印应答
